@@ -1,0 +1,54 @@
+<header class="flex">
+  <h1>Welcome to {{ title }}!</h1>
+</header>
+<main>
+  <p>
+    <mat-form-field class="example-full-width" appearance="fill">
+      <mat-label>City name</mat-label>
+      <input matInput (keyup)="applyFilter($event.target)" placeholder="City name">
+    </mat-form-field>
+  </p>
+  <p *ngIf="!!(error$ | async)" class="err">
+    {{error$ | async}}
+  </p>
+  <p>
+    <mat-button-toggle-group name="weatherType" [value]="selectedType" (change)="changeType($event)">
+      <mat-button-toggle value="1">Daily</mat-button-toggle>
+      <mat-button-toggle value="0">Hourly</mat-button-toggle>
+    </mat-button-toggle-group>
+  </p>
+  <div class="flex" *ngIf="(type$ | async) !== weatherForecastDailyType">
+    <table mat-table [dataSource]="forecastDataSource$" class="mat-elevation-z8">
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> City Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+      </ng-container>
+    
+      <ng-container *ngFor="let col of columnsHourly; let i = index" [matColumnDef]="col">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ col }} </th>
+        <td mat-cell *matCellDef="let element"> {{ element.weatherData[i] }} &deg; </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumnsHourly"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumnsHourly;"></tr>
+    </table>    
+  </div>
+  <div class="flex" *ngIf="(type$ | async) === weatherForecastDailyType">
+    <table mat-table [dataSource]="forecastDataSource$" class="mat-elevation-z8">
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> City Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+      </ng-container>
+    
+      <ng-container *ngFor="let col of columnsDaily; let i = index" [matColumnDef]="col">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ col }} </th>
+        <td mat-cell *matCellDef="let element"> {{ element.weatherData[i] }} &deg; </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumnsDaily"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumnsDaily;"></tr>
+    </table>    
+  </div>
+</main> 
